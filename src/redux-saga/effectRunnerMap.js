@@ -1,4 +1,4 @@
-import { CALL, CPS, FORK, PUT, TAKE, ALL } from "./effectTypes";
+import { CALL, CPS, FORK, PUT, TAKE, ALL, CANCEL } from "./effectTypes";
 import proc from "./proc";
 import { createAllStyleChildCallbacks } from "./utils";
 
@@ -18,8 +18,8 @@ const runTakeEffect = (env, payload, next) => {
 };
 
 const runForkEffect = (env, payload, next) => {
-  proc(env, payload.fn());
-  next();
+  const task = proc(env, payload.fn());
+  next(task);
 };
 
 const runCallEffect = (env, payload, next) => {
@@ -50,6 +50,11 @@ const runAllEffect = (env, payload, next, { runEffect }) => {
   });
 };
 
+const runCancelEffect = (env, payload, next) => {
+  const { task } = payload
+
+}
+
 const effectRunnerMap = {
   [PUT]: runPutEffect,
   [TAKE]: runTakeEffect,
@@ -57,6 +62,7 @@ const effectRunnerMap = {
   [CALL]: runCallEffect,
   [CPS]: runCpsEffect,
   [ALL]: runAllEffect,
+  [CANCEL]: runCancelEffect
 };
 
 export default effectRunnerMap;

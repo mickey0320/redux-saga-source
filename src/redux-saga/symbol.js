@@ -1,0 +1,1 @@
+export const CANCEL_TASK = Symbol('cancel_task')

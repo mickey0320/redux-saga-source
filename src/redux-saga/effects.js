@@ -1,4 +1,4 @@
-import { PUT, TAKE, FORK, CALL, CPS, ALL } from "./effectTypes";
+import { PUT, TAKE, FORK, CALL, CPS, ALL, CANCEL } from "./effectTypes";
 
 const makeEffect = (type, payload) => {
   return {
@@ -33,10 +33,14 @@ export function call(fn, ...args) {
   return makeEffect(CALL, { fn, args });
 }
 
-export function cps(fn, ...args){
-  return makeEffect(CPS, { fn, args })
+export function cps(fn, ...args) {
+  return makeEffect(CPS, { fn, args });
 }
 
 export function all(effects) {
   return makeEffect(ALL, { effects });
+}
+
+export function cancel(task) {
+  return makeEffect(CANCEL, { task });
 }

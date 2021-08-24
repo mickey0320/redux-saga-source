@@ -1,8 +1,14 @@
 import effectRunnerMap from "./effectRunnerMap";
+import { CANCEL_TASK } from "./symbol";
 
 function proc(env, iterator, cont) {
+  const task = {
+    cancel: () => next(CANCEL_TASK),
+  };
   function next(val, isError) {
-    if (isError) {
+    if (val === CANCEL_TASK) {
+      iterator.return(val);
+    } else if (isError) {
       iterator.throw(val);
       return;
     }
@@ -32,6 +38,8 @@ function proc(env, iterator, cont) {
     }
   }
   next();
+
+  return task;
 }
 
 export default proc;
