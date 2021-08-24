@@ -8,13 +8,13 @@ function proc(env, iterator, cont) {
     }
     const result = iterator.next(val);
     if (!result.done) {
-      runEffect(result.value);
+      runEffect(result.value, next);
     } else {
       cont?.(result.value);
     }
   }
 
-  function runEffect(effect) {
+  function runEffect(effect, next) {
     // 是一个迭代器对象
     if (effect && typeof effect[Symbol.iterator] === "function") {
       proc(env, effect, next);
@@ -25,7 +25,7 @@ function proc(env, iterator, cont) {
       });
     } else {
       if (effect) {
-        effectRunnerMap[effect.type](env, effect.payload, next);
+        effectRunnerMap[effect.type](env, effect.payload, next, { runEffect });
       } else {
         next();
       }
