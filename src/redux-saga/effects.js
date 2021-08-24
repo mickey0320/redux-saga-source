@@ -1,4 +1,4 @@
-import { PUT, TAKE } from "./effectTypes";
+import { PUT, TAKE, FORK, CALL, CPS } from "./effectTypes";
 
 const makeEffect = (type, payload) => {
   return {
@@ -13,4 +13,26 @@ export function take(actionType) {
 
 export function put(action) {
   return makeEffect(PUT, { action });
+}
+
+export function fork(fn) {
+  return makeEffect(FORK, { fn });
+}
+
+export function takeEvery(actionType, saga) {
+  function* takeEveryHelper() {
+    while (true) {
+      const result = yield take(actionType);
+      yield fork(saga.bind(null, result));
+    }
+  }
+  return fork(takeEveryHelper);
+}
+
+export function call(fn, ...args) {
+  return makeEffect(CALL, { fn, args });
+}
+
+export function cps(fn, ...args){
+  return makeEffect(CPS, { fn, args })
 }

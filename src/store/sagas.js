@@ -1,4 +1,4 @@
-import { put, take } from "../redux-saga/effects";
+import { call, put, take, takeEvery } from "../redux-saga/effects";
 import { add } from "./actionCreators";
 import { ASYNC_ADD } from "./actions";
 
@@ -10,16 +10,15 @@ function wait(time, payload) {
   });
 }
 
-// function* async(action) {
-//   const count = yield call(wait, 1000, action.payload);
-//   yield put(add(count));
-// }
+function* task(action) {
+  // const res = yield wait(1000, "ok");
+  const res = yield call(wait, 1000, 'ok')
+  console.log(res);
+  yield put(add(1));
+}
 function* mySaga() {
-  for (let i = 0; i < 3; i++) {
-    const xx = yield take(ASYNC_ADD);
-    console.log(xx)
-    yield put(add(1));
-  }
+  yield takeEvery(ASYNC_ADD, task);
+  console.log("after");
 }
 
 export default mySaga;
